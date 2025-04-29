@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createPost, getPosts, getUsers } from "./utils/api";
 import { PostsResponseHttpData, UserResponseHttpData } from "./types/user.type";
 import "./App.css";
@@ -22,31 +22,34 @@ function App() {
   });
 
   // const createPostMutation = useMutation({
-  const { mutate: createPostMutation, isSuccess: isCreatePostSuccess, isPending: isCreatePostPending } =
-    useMutation({
-      mutationKey: ["createPost"],
-      mutationFn: createPost,
-    });
+  const { mutate: createPostMutation, isSuccess: isCreatePostSuccess, isPending: isCreatePostPending } = useMutation({
+    mutationKey: ["createPost"],
+    mutationFn: createPost,
+    onSuccess: () => {
+      console.log("isCreatePostSuccess - Refetching Posts");
+      queryClient.invalidateQueries({ queryKey: ["getusers"] });
+      queryClient.invalidateQueries({ queryKey: ["getPosts"] });
+    },
+  });
 
   const {
     data: postsData,
     error: postsError,
     isLoading: isPostsLoading,
-    refetch: refetchGetposts
   } = useQuery<PostsResponseHttpData[]>({
     queryKey: ["getPosts"],
     queryFn: getPosts,
   });
 
+  // Method 2
   // Invalidate posts and users
-  useEffect(() => {
-    if(isCreatePostSuccess && isCreatePostPending ){
-      console.log("isCreatePostSuccess - Refetching Posts");
-      queryClient.invalidateQueries({ queryKey: ["getusers"] });
-      queryClient.invalidateQueries({ queryKey: ["getPosts"] });
-    }
-  }, [])
-  
+  // useEffect(() => {
+  //   if(isCreatePostSuccess && isCreatePostPending ){
+  //     console.log("isCreatePostSuccess - Refetching Posts");
+  //     queryClient.invalidateQueries({ queryKey: ["getusers"] });
+  //     queryClient.invalidateQueries({ queryKey: ["getPosts"] });
+  //   }
+  // }, [isCreatePostSuccess, isCreatePostPending, queryClient])
 
   if (usersError && !isUsersLoading) {
     return <div>Something went wrong while fetching users</div>;
