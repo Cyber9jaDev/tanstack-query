@@ -12,11 +12,7 @@ function App() {
   const queryClient = useQueryClient();
 
   // const getUsersQuery = useQuery<UserResponseHttpData[]>({
-  const {
-    data: usersData,
-    error: usersError,
-    isLoading: isUsersLoading,
-  } = useQuery<UserResponseHttpData[]>({
+  const { data: usersData, error: usersError, isLoading: isUsersLoading } = useQuery<UserResponseHttpData[]>({
     queryKey: ["getUsers"],
     queryFn: getUsers,
   });
@@ -32,11 +28,7 @@ function App() {
     },
   });
 
-  const {
-    data: postsData,
-    error: postsError,
-    isLoading: isPostsLoading,
-  } = useQuery<PostsResponseHttpData[]>({
+  const { data: postsData, error: postsError, isLoading: isPostsLoading } = useQuery<PostsResponseHttpData[]>({
     queryKey: ["getPosts"],
     queryFn: getPosts,
   });
@@ -57,11 +49,7 @@ function App() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    createPostMutation({
-      title,
-      body,
-      userId: 11232433232,
-    });
+    createPostMutation({ title, body, userId: 11232433232 });
     setBody("");
     setTitle("");
   };
