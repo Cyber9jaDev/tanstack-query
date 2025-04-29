@@ -1,7 +1,7 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createPost, getPosts, getUsers } from "./utils/api";
-import { PostsResponseHttpData, UserResponseHttpData } from "./types/user.type";
+import { createPost, getPosts } from "./utils/api";
+import { PostsResponseHttpData } from "./types/user.type";
 import "./App.css";
 
 function App() {
@@ -11,14 +11,15 @@ function App() {
   // Use this to invalidate queries and mutations
   const queryClient = useQueryClient();
 
-  // const getUsersQuery = useQuery<UserResponseHttpData[]>({
-  const { data: usersData, error: usersError, isLoading: isUsersLoading } = useQuery<UserResponseHttpData[]>({
-    queryKey: ["getUsers"],
-    queryFn: getUsers,
+  // Get Posts
+  // Destructure
+  const { data: postsData, error: postsError, isLoading: isPostsLoading } = useQuery<PostsResponseHttpData[]>({
+    queryKey: ["getPosts"],
+    queryFn: getPosts,
   });
 
   // const createPostMutation = useMutation({
-  const { mutate: createPostMutation, isSuccess: isCreatePostSuccess, isPending: isCreatePostPending } = useMutation({
+  const { mutate: createPostMutation } = useMutation({
     mutationKey: ["createPost"],
     mutationFn: createPost,
     onSuccess: () => {
@@ -28,22 +29,9 @@ function App() {
     },
   });
 
-  const { data: postsData, error: postsError, isLoading: isPostsLoading } = useQuery<PostsResponseHttpData[]>({
-    queryKey: ["getPosts"],
-    queryFn: getPosts,
-  });
 
-  // Method 2
-  // Invalidate posts and users
-  // useEffect(() => {
-  //   if(isCreatePostSuccess && isCreatePostPending ){
-  //     console.log("isCreatePostSuccess - Refetching Posts");
-  //     queryClient.invalidateQueries({ queryKey: ["getusers"] });
-  //     queryClient.invalidateQueries({ queryKey: ["getPosts"] });
-  //   }
-  // }, [isCreatePostSuccess, isCreatePostPending, queryClient])
 
-  if (usersError && !isUsersLoading) {
+  if (postsError && !isPostsLoading) {
     return <div>Something went wrong while fetching users</div>;
   }
 
@@ -59,59 +47,24 @@ function App() {
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title">Title</label>
-          <input
-            onChange={(e) => setTitle(e.target.value)}
-            type="text"
-            name="title"
-            value={title}
-            id="title"
-          />
+          <input onChange={(e) => setTitle(e.target.value)} type="text" name="title" value={title} id="title" />
         </div>
-
         <div>
           <label htmlFor="body">Body</label>
-          <input
-            onChange={(e) => setBody(e.target.value)}
-            type="text"
-            name="body"
-            value={body}
-            id="body"
-          />
+          <input onChange={(e) => setBody(e.target.value)} type="text" name="body" value={body} id="body" />
         </div>
 
         <button>Create Post</button>
       </form>
 
       <div>
-        {!isPostsLoading &&
-          postsData &&
-          postsData.map((post) => (
+        {!isPostsLoading && postsData && postsData.map((post) => (
             <div key={post.id}>
               <h1>{post.title}</h1>
               <p>{post.body}</p>
             </div>
           ))}
       </div>
-
-      {/* {!isUsersLoading && usersData ? (
-        <div>
-          {usersData.map((user) => (
-            <div key={user.id}>
-              <div>
-                <b>{user.name}</b>
-              </div>
-              <div>
-                <b>{user.username}</b>
-              </div>
-              <div>
-                <b>{user.email}</b>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div>Loading.......</div>
-      )} */}
     </div>
   );
 }

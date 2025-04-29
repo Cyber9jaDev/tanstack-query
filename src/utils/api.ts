@@ -1,14 +1,5 @@
 import { CreatePostRequestBody } from "../types/user.type";
 
-export const getUsers = async () => {
-  const response = await fetch("https://jsonplaceholder.typicode.com/users");
-  if (response.ok) {
-    const result = await response.json();
-    return result;
-  }
-  return Promise.reject("Error occured");
-};
-
 export const getPosts = async () => {
   const response = await fetch("https://jsonplaceholder.typicode.com/posts");
   if (response.ok) {

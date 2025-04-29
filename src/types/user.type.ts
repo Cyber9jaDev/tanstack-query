@@ -1,10 +1,3 @@
-export interface UserResponseHttpData {
-  id: number;
-  name: string;
-  email: string;
-  username: string;
-}
-
 export interface CreatePostRequestBody {
   title: string;
   body: string;
